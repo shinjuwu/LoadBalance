@@ -1,9 +1,12 @@
 package route
 
 import (
+	"LoadBalance/presistence"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
+	"github.com/garyburd/redigo/redis"
 	"github.com/gin-gonic/gin"
 )
 
@@ -87,4 +90,20 @@ func responseMessage(context *gin.Context, response interface{}) {
 		panic(err)
 	}
 	context.String(http.StatusOK, string(byteData))
+}
+
+func getGosIP(context *gin.Context) {
+	token := context.Query("token")
+	gameCode := context.Query("gameCode")
+	key := token + gameCode
+
+}
+
+func addNewServer(context *gin.Context) {
+	conn := presistence.GetRedisConn()
+	defer conn.Close()
+	serverList, err := redis.(conn.Do("GET", "ServerList"))
+	if err != nil {
+		fmt.Println("Get server list error!")
+	}
 }

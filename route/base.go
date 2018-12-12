@@ -137,6 +137,10 @@ type memberLogoutResData struct {
 
 func RegisterRouter() *gin.Engine {
 	router := gin.Default()
+	//舊的LobbyService
 	router.POST("/LoadBalance", loadbalanceController)
+
+	router.GET("/server/ip", getGosIP)
+	router.POST("/newserver", addNewServer)
 	return router
 }
