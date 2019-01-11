@@ -8,6 +8,7 @@ import (
 
 	"github.com/garyburd/redigo/redis"
 	"github.com/gin-gonic/gin"
+	"github.com/liangdas/mqant/log"
 )
 
 func loadbalanceController(context *gin.Context) {
@@ -93,17 +94,33 @@ func responseMessage(context *gin.Context, response interface{}) {
 }
 
 func getGosIP(context *gin.Context) {
-	token := context.Query("token")
-	gameCode := context.Query("gameCode")
-	key := token + ":" + gameCode
-
+	// token := context.Query("token")
+	// gameCode := context.Query("gameCode")
+	// key := token + ":" + gameCode
+	// byteData, err := Query(key)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	context.String(http.StatusOK, string("twgsg1.dreamtech8.com"))
 }
 
 func addNewServer(context *gin.Context) {
 	conn := presistence.GetRedisConn()
 	defer conn.Close()
-	serverList, err := redis.Bytes(conn.Do("GET", "ServerList"))
+	serverList, err := redis.Bytes(conn.Do("SET", "ServerList"))
 	if err != nil {
 		fmt.Println("Get server list error!")
 	}
+	fmt.Println(string(serverList))
+}
+
+func Query(key string) ([]byte, error) {
+	conn := presistence.GetRedisConn()
+	defer conn.Close()
+	data, err := redis.Bytes(conn.Do("GET", key))
+	if err != nil {
+		log.Error("redis Get failure, key : %s , Error: %v", key, err)
+		return nil, err
+	}
+	return data, nil
 }
